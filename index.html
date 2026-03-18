@@ -3,258 +3,198 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>No is not an option</title>
+  <title>A Quick Question...</title>
   <style>
-    :root { --card-bg: #fff0f6; --pink: #ff9ab3; --accent: #7bd389; }
+    :root { 
+      --card-bg: #fff0f6; 
+      --pink: #ff85a2; 
+      --accent: #f8bbd0; 
+      --text: #4a4a4a;
+    }
 
-    html,body { height:100%; margin:0; font-family: Arial, Helvetica, sans-serif; }
+    html, body { height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
     body {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:100vh;
-      background: linear-gradient(120deg,#8ec5ff,#e0c3fc);
-      overflow:hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+      overflow: hidden;
     }
 
     .box {
-      position: relative;             /* important: contained absolute children */
-      width: 360px;
+      position: relative;
+      width: 340px;
       text-align: center;
-      background: white;
-      border-radius: 20px;
-      padding: 36px 24px;
-      box-shadow: 0 14px 40px rgba(0,0,0,0.12);
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 24px;
+      padding: 40px 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+      backdrop-filter: blur(5px);
     }
 
     h2 {
-      margin: 0 0 14px;
-      font-family: "Segoe UI", system-ui, -apple-system;
-      font-size: 20px;
-      color: #333;
+      margin: 10px 0 20px;
+      font-size: 22px;
+      color: var(--text);
+      line-height: 1.4;
     }
 
-    .cute {
-      font-size: 64px;
-      margin-bottom: 8px;
+    .cute-icon {
+      font-size: 70px;
+      margin-bottom: 10px;
+      display: block;
     }
 
-    .btn-row { margin-top: 14px; display:flex; justify-content:center; gap:12px; position:relative; }
+    .btn-row { 
+      margin-top: 20px; 
+      display: flex; 
+      justify-content: center; 
+      gap: 15px; 
+      position: relative; 
+      height: 50px; /* reserved space for dodging */
+    }
 
     button {
-      padding:10px 20px;
-      border-radius: 12px;
+      padding: 12px 28px;
+      border-radius: 50px;
       border: none;
-      font-size:16px;
-      cursor:pointer;
-      user-select:none;
-      transition: transform .12s ease;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    button:active { transform: scale(.98); }
 
-    #yes { background: var(--pink); color:white; }
-    #no  { background: #ddd; color:#444; position:relative; }
+    #yes { 
+      background: var(--pink); 
+      color: white; 
+      box-shadow: 0 4px 15px rgba(255, 133, 162, 0.4);
+    }
+    
+    #yes:hover { transform: scale(1.05); }
 
-    /* emoji particles */
+    #no { 
+      background: #eee; 
+      color: #777; 
+      position: relative;
+    }
+
+    /* Particles */
     .emoji {
       position: absolute;
       pointer-events: none;
-      font-size: 30px;
-      will-change: transform, opacity;
-      transform-origin: center center;
-      animation: emojiFly var(--dur, 900ms) cubic-bezier(.08,.9,.38,1) forwards;
-      z-index: 1200;
+      z-index: 1000;
+      animation: fly var(--dur) ease-out forwards;
     }
 
-    @keyframes emojiFly {
-      0% { transform: translate(0,0) scale(1) rotate(0deg); opacity:1; }
-      50% { transform: translate(var(--tx), var(--ty)) scale(1.4) rotate(var(--rot)); opacity:1; }
-      100% { transform: translate(calc(var(--tx) * 1.1), calc(var(--ty) - 30px)) scale(0.9) rotate(calc(var(--rot) * 1.2)); opacity:0; }
+    @keyframes fly {
+      0% { transform: translate(0,0) scale(0); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1.2); opacity: 0; }
     }
 
-    /* confetti pieces */
-    .confetti {
-      position: absolute;
-      width: 10px;
-      height: 14px;
-      border-radius: 2px;
-      will-change: transform, opacity;
-      animation: confettiFall var(--cDur, 1200ms) linear forwards;
-      z-index: 1100;
-    }
-
-    @keyframes confettiFall {
-      0% { transform: translateY(0) rotate(0deg); opacity:1; }
-      60% { transform: translateY(160px) rotate(180deg); opacity:1; }
-      100% { transform: translateY(300px) rotate(360deg); opacity:0; }
-    }
-
-    /* quick celebration headline */
-    .celebrate-title {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      top: 10px;
-      font-size: 22px;
-      font-weight: 700;
-      color: #333;
+    /* Celebration Overlay */
+    #overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       opacity: 0;
       pointer-events: none;
-      z-index: 1300;
-      text-shadow: 0 4px 18px rgba(0,0,0,0.08);
-      transition: opacity .25s ease, transform .4s cubic-bezier(.2,.9,.3,1);
+      transition: opacity 0.5s ease;
+      z-index: 2000;
     }
-    .celebrate-title.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(-6px);
+    #overlay.show { opacity: 1; pointer-events: auto; }
+    
+    .final-msg {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--pink);
+      text-align: center;
+      transform: scale(0.5);
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
+    #overlay.show .final-msg { transform: scale(1); }
   </style>
 </head>
 <body>
 
   <div class="box" id="card">
-    <div class="celebrate-title" id="celebrateTitle">YAY! 🎉</div>
-
-    <div class="cute">🥺</div>
-    <h2 id="prompt">I am smarter than you? 😎</h2>
+    <span class="cute-icon">🫣</span>
+    <h2 id="prompt">Am I your favorite person <br>to talk to?</h2>
 
     <div class="btn-row">
-      <button id="yes">Yes 💖</button>
-      <button id="no">No 😏</button>
+      <button id="yes">Obviously ❤️</button>
+      <button id="no">Not really 🙄</button>
+    </div>
+  </div>
+
+  <div id="overlay">
+    <div class="final-msg">
+      I knew it! <br>
+      <span style="font-size: 50px;">😘</span><br>
+      <span style="font-size: 18px; color: #777; font-weight: 400;">(You're stuck with me now)</span>
     </div>
   </div>
 
 <script>
-  // elements
   const noBtn = document.getElementById('no');
   const yesBtn = document.getElementById('yes');
+  const overlay = document.getElementById('overlay');
   const card = document.getElementById('card');
-  const prompt = document.getElementById('prompt');
-  const title = document.getElementById('celebrateTitle');
 
-  // "No" dodge behavior (keep it playful)
+  // "No" button dodging logic
   noBtn.addEventListener('mouseover', () => {
     const x = Math.random() * 140 - 70;
-    const y = Math.random() * 30 - 15;
+    const y = Math.random() * 80 - 40;
     noBtn.style.transform = `translate(${x}px, ${y}px)`;
   });
-  noBtn.addEventListener('mouseout', () => { noBtn.style.transform = ''; });
 
-  // helper to play a short pleasant tone
-  function playTone() {
-    try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.type = 'sine';
-      o.frequency.value = 880;
-      g.gain.value = 0.04;
-      o.connect(g); g.connect(ctx.destination);
-      o.start();
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.45);
-      setTimeout(()=>{ o.stop(); ctx.close?.(); }, 500);
-    } catch(e) { /* ignore if AudioContext blocked */ }
-  }
-
-  // main celebration routine
-  yesBtn.addEventListener('click', () => {
-    // disable buttons so user can't spam
-    yesBtn.disabled = true;
-    noBtn.disabled = true;
-    yesBtn.style.cursor = 'default';
-    noBtn.style.cursor = 'default';
-
-    // change prompt text
-    prompt.textContent = "You chose... wisely 😄";
-
-    // show celebration title
-    title.classList.add('show');
-
-    // play tone
-    playTone();
-
-    // burst emojis
-    burstEmojis(22);
-
-    // burst confetti
-    burstConfetti(28);
-
-    // small pulse on the yes button
-    yesBtn.animate([
-      { transform: 'scale(1)' },
-      { transform: 'scale(1.06)' },
-      { transform: 'scale(1)' }
-    ], { duration: 520, easing: 'ease-out' });
-
-    // optional: after animation, show a big message inside card
-    setTimeout(() => {
-      // replace inner card content with a big message (optional)
-      const big = document.createElement('div');
-      big.style.padding = '18px';
-      big.style.marginTop = '6px';
-      big.innerHTML = "<h2 style='margin:0 0 8px'>That's amazing! 💖</h2><div style='font-size:14px;color:#555'>You're awesome — celebration mode ON 🎉</div>";
-      card.appendChild(big);
-    }, 900);
+  // Return to normal when mouse leaves
+  noBtn.addEventListener('mouseout', () => {
+    noBtn.style.transform = `translate(0, 0)`;
   });
 
-  // create emoji particles from center of card
-  function burstEmojis(count=18) {
-    const emojis = ['💖','😍','🎉','🥳','😊','😄','✨','🤩'];
-    const rect = card.getBoundingClientRect();
-    const startX = rect.left + rect.width/2;
-    const startY = rect.top + rect.height/2 - 20;
+  yesBtn.addEventListener('click', () => {
+    // 1. Effects
+    burstEmojis(30);
+    
+    // 2. Show the final message
+    setTimeout(() => {
+      overlay.classList.add('show');
+      burstEmojis(20); // burst more on the final screen
+    }, 300);
+  });
 
-    for (let i=0;i<count;i++) {
-      const span = document.createElement('div');
-      span.className = 'emoji';
-      span.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-      // size variety
-      const size = 18 + Math.floor(Math.random()*26);
-      span.style.fontSize = size + 'px';
-
-      // initial position
-      span.style.left = (startX - (size/2)) + 'px';
-      span.style.top  = (startY - (size/2)) + 'px';
-
-      // random target translation
-      const tx = (Math.random() * 240 - 120).toFixed(0) + 'px'; // x offset
-      const ty = (Math.random() * -260 - 40).toFixed(0) + 'px'; // y offset (go up)
-      const rot = (Math.random() * 720 - 360).toFixed(0) + 'deg';
-      const dur = 800 + Math.floor(Math.random()*700);
-
-      span.style.setProperty('--tx', tx);
-      span.style.setProperty('--ty', ty);
-      span.style.setProperty('--rot', rot);
-      span.style.setProperty('--dur', dur+'ms');
-
-      document.body.appendChild(span);
-
-      // remove when animation over
-      setTimeout(()=> { span.remove(); }, dur + 120);
-    }
-  }
-
-  // confetti burst
-  function burstConfetti(count=20) {
-    const colors = ['#ff3b6b','#ffd36b','#7be77b','#7bd3ff','#c98bff','#ff8fb3'];
-    const rect = card.getBoundingClientRect();
-    const startX = rect.left + rect.width/2;
-    const startY = rect.top + 40;
-
-    for (let i=0;i<count;i++) {
-      const c = document.createElement('div');
-      c.className = 'confetti';
-      c.style.left = (startX + Math.random()*120 - 60) + 'px';
-      c.style.top = (startY + Math.random()*20 - 10) + 'px';
-      c.style.background = colors[Math.floor(Math.random()*colors.length)];
-      c.style.width = (6 + Math.random()*10) + 'px';
-      c.style.height = (8 + Math.random()*10) + 'px';
-      const dur = 900 + Math.floor(Math.random()*700);
-      c.style.setProperty('--cDur', dur + 'ms');
-      c.style.transform = `rotate(${Math.random()*360}deg)`;
-      document.body.appendChild(c);
-      setTimeout(()=> c.remove(), dur + 120);
+  function burstEmojis(count) {
+    const list = ['🌸', '✨', '💖', '🧸', '🥰', '🍭', '💌'];
+    for (let i = 0; i < count; i++) {
+      const e = document.createElement('div');
+      e.className = 'emoji';
+      e.textContent = list[Math.floor(Math.random() * list.length)];
+      
+      const startX = window.innerWidth / 2;
+      const startY = window.innerHeight / 2;
+      
+      e.style.left = startX + 'px';
+      e.style.top = startY + 'px';
+      e.style.fontSize = (Math.random() * 20 + 20) + 'px';
+      
+      const tx = (Math.random() * 400 - 200) + 'px';
+      const ty = (Math.random() * -400 - 50) + 'px';
+      const rot = (Math.random() * 360) + 'deg';
+      const dur = (Math.random() * 800 + 800) + 'ms';
+      
+      e.style.setProperty('--tx', tx);
+      e.style.setProperty('--ty', ty);
+      e.style.setProperty('--rot', rot);
+      e.style.setProperty('--dur', dur);
+      
+      document.body.appendChild(e);
+      setTimeout(() => e.remove(), 1500);
     }
   }
 </script>
