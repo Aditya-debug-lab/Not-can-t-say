@@ -6,9 +6,7 @@
   <title>A Quick Question...</title>
   <style>
     :root { 
-      --card-bg: #fff0f6; 
       --pink: #ff85a2; 
-      --accent: #f8bbd0; 
       --text: #4a4a4a;
     }
 
@@ -27,11 +25,12 @@
       position: relative;
       width: 340px;
       text-align: center;
-      background: rgba(255, 255, 255, 0.9);
+      background: white;
       border-radius: 24px;
       padding: 40px 20px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-      backdrop-filter: blur(5px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 10;
     }
 
     h2 {
@@ -41,19 +40,14 @@
       line-height: 1.4;
     }
 
-    .cute-icon {
-      font-size: 70px;
-      margin-bottom: 10px;
-      display: block;
-    }
+    .cute-icon { font-size: 70px; margin-bottom: 10px; display: block; }
 
     .btn-row { 
       margin-top: 20px; 
       display: flex; 
       justify-content: center; 
       gap: 15px; 
-      position: relative; 
-      height: 50px; /* reserved space for dodging */
+      height: 50px; 
     }
 
     button {
@@ -63,28 +57,17 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s;
     }
 
-    #yes { 
-      background: var(--pink); 
-      color: white; 
-      box-shadow: 0 4px 15px rgba(255, 133, 162, 0.4);
-    }
-    
-    #yes:hover { transform: scale(1.05); }
-
-    #no { 
-      background: #eee; 
-      color: #777; 
-      position: relative;
-    }
+    #yes { background: var(--pink); color: white; box-shadow: 0 4px 15px rgba(255, 133, 162, 0.4); }
+    #no { background: #eee; color: #777; position: relative; }
 
     /* Particles */
     .emoji {
       position: absolute;
       pointer-events: none;
-      z-index: 1000;
+      z-index: 3000;
       animation: fly var(--dur) ease-out forwards;
     }
 
@@ -93,11 +76,12 @@
       100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1.2); opacity: 0; }
     }
 
-    /* Celebration Overlay */
+    /* Celebration Overlay - Now Solid to block the background */
     #overlay {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(255, 255, 255, 0.8);
+      /* Matches the body gradient but is solid/opaque */
+      background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -112,10 +96,10 @@
     .final-msg {
       font-size: 28px;
       font-weight: 800;
-      color: var(--pink);
+      color: #333;
       text-align: center;
       transform: scale(0.5);
-      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     #overlay.show .final-msg { transform: scale(1); }
   </style>
@@ -135,8 +119,8 @@
   <div id="overlay">
     <div class="final-msg">
       I knew it! <br>
-      <span style="font-size: 50px;">😘</span><br>
-      <span style="font-size: 18px; color: #777; font-weight: 400;">(You're stuck with me now)</span>
+      <span style="font-size: 80px; display: block; margin: 10px 0;">😏</span>
+      <span style="font-size: 18px; color: #555; font-weight: 400;">(You're stuck with me now)</span>
     </div>
   </div>
 
@@ -146,31 +130,35 @@
   const overlay = document.getElementById('overlay');
   const card = document.getElementById('card');
 
-  // "No" button dodging logic
+  // "No" button dodging
   noBtn.addEventListener('mouseover', () => {
-    const x = Math.random() * 140 - 70;
-    const y = Math.random() * 80 - 40;
+    const x = Math.random() * 160 - 80;
+    const y = Math.random() * 100 - 50;
     noBtn.style.transform = `translate(${x}px, ${y}px)`;
   });
 
-  // Return to normal when mouse leaves
   noBtn.addEventListener('mouseout', () => {
     noBtn.style.transform = `translate(0, 0)`;
   });
 
   yesBtn.addEventListener('click', () => {
-    // 1. Effects
-    burstEmojis(30);
+    // 1. Hide the original card completely
+    card.style.opacity = '0';
+    card.style.transform = 'scale(0.8)';
     
-    // 2. Show the final message
+    // 2. Burst effects
+    burstEmojis(25);
+    
+    // 3. Show the solid overlay and clear the card after animation
     setTimeout(() => {
+      card.style.display = 'none';
       overlay.classList.add('show');
-      burstEmojis(20); // burst more on the final screen
+      burstEmojis(15); 
     }, 300);
   });
 
   function burstEmojis(count) {
-    const list = ['🌸', '✨', '💖', '🧸', '🥰', '🍭', '💌'];
+    const list = ['🌸', '✨', '💖', '😏', '🍭', '💌'];
     for (let i = 0; i < count; i++) {
       const e = document.createElement('div');
       e.className = 'emoji';
@@ -183,10 +171,10 @@
       e.style.top = startY + 'px';
       e.style.fontSize = (Math.random() * 20 + 20) + 'px';
       
-      const tx = (Math.random() * 400 - 200) + 'px';
-      const ty = (Math.random() * -400 - 50) + 'px';
+      const tx = (Math.random() * 500 - 250) + 'px';
+      const ty = (Math.random() * -500 - 50) + 'px';
       const rot = (Math.random() * 360) + 'deg';
-      const dur = (Math.random() * 800 + 800) + 'ms';
+      const dur = (Math.random() * 800 + 1000) + 'ms';
       
       e.style.setProperty('--tx', tx);
       e.style.setProperty('--ty', ty);
@@ -194,7 +182,7 @@
       e.style.setProperty('--dur', dur);
       
       document.body.appendChild(e);
-      setTimeout(() => e.remove(), 1500);
+      setTimeout(() => e.remove(), 1800);
     }
   }
 </script>
